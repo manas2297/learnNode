@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const PORT = 3000;
 const User = require('./models/user.model');
+const auth = require('./middleware/authenticate.middleware');
 const jwt = require('jsonwebtoken');
 const app = express();
 app.use(express.json());
@@ -9,10 +10,11 @@ app.use(express.json());
 app.get('/',(req,res)=>{
   res.send('hello');
 })
-app.get('/api/user/listall', async (req,res)=>{
+app.get('/api/user/listall',auth, async (req,res)=>{
   try{
+    console.log(req.user)
     let user=  await User.find({
-      email:"guddababy"
+      email: req.user.id
     });
     // let data= user.find();
     res.status(200).json(user);
@@ -45,7 +47,7 @@ app.post('/api/user/create', async (req, res) => {
   
 })
 
-app.post('/api/user/login', x,y,s,async (req, res) => {
+app.post('/api/user/login',async (req, res) => {
   const {email, password} = req.body;   //Destructuring
   // const email = req.body.email;
   // const password = req.body.password;
@@ -61,7 +63,7 @@ app.post('/api/user/login', x,y,s,async (req, res) => {
     }
 
     const payload = {
-      email: user.email
+      id: user.email
     };
     const token = jwt.sign(payload,'111111',{expiresIn: '1h'})
     res.status(200).json({token});
