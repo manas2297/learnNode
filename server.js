@@ -8,6 +8,22 @@ app.use(express.json());
 app.get('/',(req,res)=>{
   res.send('hello');
 })
+app.get('/api/user/listall', async (req,res)=>{
+  try{
+    let user=  await User.find({
+      email:"guddababy"
+    });
+    // let data= user.find();
+    res.status(200).json(user);
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).send({
+      "message":"Internal error found",
+    })
+  }
+  
+})
 app.post('/api/user/create', async (req, res) => {
   try{
     const {firstname, lastname, phone, email, password} = req.body;
